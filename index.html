@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Карта зданий Актау</title>
+  <style>
+    body { margin: 0; font-family: sans-serif; }
+    #menu {
+      width: 300px;
+      background: #f4f4f4;
+      height: 100vh;
+      padding: 20px;
+      box-sizing: border-box;
+      float: left;
+      overflow-y: auto;
+    }
+    #menu button {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    #map {
+      width: calc(100% - 300px);
+      height: 100vh;
+      float: left;
+    }
+  </style>
+  <script src="https://api-maps.yandex.ru/2.1/?apikey=ea3b163c-e521-4c5b-a8fc-eae1765b92d4&lang=ru_RU" type="text/javascript"></script>
+</head>
+<body>
+  <div id="menu"></div>
+  <div id="map"></div>
+
+  <script>
+    const buildings = [
+      { name: "Арман", coords: [43.655351, 51.153835], address: "29 ш/а, №28 о/м", date: "04.09.2006", capacity: 213 },
+      { name: "Тұлпар", coords: [43.672484, 51.172152], address: "11 ш/а, №10 о/м", date: "04.09.2006", capacity: 275 },
+      { name: "Толқын", coords: [43.654621, 51.143451], address: "14 ш/а, №15 о/м", date: "04.09.2006", capacity: 144 },
+      { name: "Ұлан", coords: [43.647038, 51.164299], address: "8 ш/а, №8 о/м", date: "04.09.2006", capacity: 204 },
+      { name: "Мирас", coords: [43.646574, 51.157097], address: "7 ш/а, №14 үй", date: "08.09.2006", capacity: 168 },
+      { name: "Зерде", coords: [43.687507, 51.179869], address: "31Б ш/а, №25 жатақ", date: "04.09.2006", capacity: 287 },
+      { name: "Балдәурен", coords: [43.666819, 51.160295], address: "27 ш/а, №16 о/м", date: "04.10.2006", capacity: 252 },
+      { name: "Өрлеу", coords: [43.667967, 51.164733], address: "28 ш/а, №2 үй", date: "29.04.2008", capacity: 369 },
+      { name: "Ақжелкен", coords: [43.661725, 51.168098], address: "26 ш/а, №14 о/м, 27 ш/а, №11/1 ғимарат", date: "29.04.2008", capacity: 321 },
+      { name: "Рауан", coords: [43.646574, 51.157097], address: "7 ш/а, №14 үй", date: "29.04.2008", capacity: 141 },
+      { name: "Шағала", coords: [43.654621, 51.143451], address: "14 ш/а, №15 о/м", date: "26.03.2009", capacity: 234 },
+      { name: "Самғау", coords: [43.633089, 51.164957], address: "4 ш/а, №5 о/м", date: "26.03.2009", capacity: 186 },
+      { name: "Достық", coords: [43.645006, 51.175064], address: "22 ш/а, №22 о/м", date: "26.03.2009", capacity: 252 },
+      { name: "Өркен", coords: [43.665156, 51.170725], address: "28А ш/а, №23 о/м", date: "16.07.2010", capacity: 137 },
+      { name: "Қайнар", coords: [43.642670, 51.157802], address: "7 ш/а, №9 о/м", date: "16.07.2010", capacity: 190 },
+      { name: "Алау", coords: [43.601308, 51.239807], address: "Өмірзақ ауылы, №27 о/м", date: "16.07.2010", capacity: 149 },
+      { name: "Арай", coords: [43.687507, 51.179869], address: "31Б ш/а, №25 жатақ", date: "01.04.2012", capacity: 252 },
+      { name: "Жігер", coords: [43.654621, 51.143451], address: "14 ш/а, №15 о/м", date: "01.04.2012", capacity: 303 },
+      { name: "Ұшқын", coords: [43.671481, 51.165146], address: "28 ш/а, №20 о/м", date: "01.04.2012", capacity: 204 },
+    ];
+
+    let myMap;
+    ymaps.ready(() => {
+      myMap = new ymaps.Map("map", {
+        center: [43.66, 51.16],
+        zoom: 12,
+        controls: ['zoomControl']
+      });
+
+      const menu = document.getElementById("menu");
+
+      buildings.forEach((bld, index) => {
+        const balloonContent = `<strong>${bld.name}</strong><br>${bld.address}<br>Открытие: ${bld.date}<br>Вместимость: ${bld.capacity}`;
+        const placemark = new ymaps.Placemark(bld.coords, {
+          balloonContent: balloonContent
+        }, {
+          preset: 'islands#blueDotIcon'
+        });
+
+        bld.placemark = placemark;
+        myMap.geoObjects.add(placemark);
+
+        const btn = document.createElement("button");
+        btn.textContent = `${index + 1}. ${bld.name}`;
+        btn.onclick = () => {
+          myMap.panTo(bld.coords, {
+            flying: true,
+            duration: 1000
+          });
+          bld.placemark.balloon.open();
+        };
+        menu.appendChild(btn);
+      });
+    });
+  </script>
+</body>
+</html>
